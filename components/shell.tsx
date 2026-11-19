@@ -131,7 +131,7 @@ function SidebarBody({
   return (
     <>
       <div className="flex items-center gap-3 px-4 py-5">
-        <Mark className="size-9 text-[#d7e4f1]" />
+        <Mark className="size-16" />
         <div>
           <div className="font-display text-[22px] leading-none tracking-tight text-white">Satya Wira</div>
           <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#9eb0c2]">Mandiri</div>

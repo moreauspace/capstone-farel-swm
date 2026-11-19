@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Mark } from "@/components/brand";
 import { DOC_META } from "@/lib/labels";
 import { formatDateTime } from "@/lib/utils";
 import { Modal } from "@/components/ui/modal";
@@ -42,7 +43,10 @@ function Paper({ doc }: { doc: DocumentDTO }) {
   const entries = Object.entries(payload).filter(([key, value]) => !["signature", "attachment"].includes(key) && value != null && value !== "");
   return (
     <article className="ticket rounded-[10px] p-6">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[#a35b32]">PT Satya Wira Mandiri</p>
+      <div className="flex items-center gap-3">
+        <Mark className="size-12" />
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[#a35b32]">PT Satya Wira Mandiri</p>
+      </div>
       <h3 className="mt-2 font-display text-3xl tracking-tight">{doc.title}</h3>
       <p className="num mt-1 text-sm text-[#6d6256]">{doc.number} · {formatDateTime(doc.createdAt)}</p>
       <div className="my-4 border-t border-dashed border-[#e0c7ae]" />

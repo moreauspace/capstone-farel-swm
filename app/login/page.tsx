@@ -14,7 +14,7 @@ export default async function LoginPage() {
     <main className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
       <section className="hidden flex-col justify-between bg-[#102433] px-12 py-10 text-[#e7eef5] lg:flex">
         <div className="flex items-center gap-3">
-          <Mark className="size-10 text-[#d7e4f1]" />
+          <Mark priority className="size-20" />
           <div>
             <p className="font-display text-3xl leading-none text-white">Satya Wira</p>
             <p className="mt-1 text-[12px] uppercase tracking-[0.16em] text-[#9eb0c2]">Mandiri</p>
