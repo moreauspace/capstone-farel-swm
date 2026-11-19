@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build:netlify"
+
+[build.environment]
+  NODE_VERSION = "20"
+  DATABASE_URL = "file:./dev.db"
+  NEXTAUTH_SECRET = "satya-wira-demo-7f3c9a1e2b4d6f8091a2b3c4d5e6f7089ab"
+
+[functions]
+  included_files = ["prisma/dev.db", "node_modules/.prisma/client/**"]

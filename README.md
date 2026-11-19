@@ -26,6 +26,12 @@ Masuk memakai username. Username adalah nama peran, huruf kecil, tanpa spasi. Ka
 | Instalasi | instalasi | instalasi123 | QC internal Sentosa lantai 4 |
 | Pelanggan | pelanggan | pelanggan123 | Periksa dan tanda tangan BAST lantai 2 |
 
+## Netlify
+
+Repo ini sudah berisi `netlify.toml`. Deploy ulang dari GitHub setelah perubahan ini masuk. Build membuat database demo sendiri, jadi jangan isi `DATABASE_URL` dengan Postgres di dashboard Netlify. Kalau variabel itu sudah ada dan bukan `file:./dev.db`, hapus lalu deploy lagi.
+
+Login demo tetap `superadmin` / `superadmin123`. Data kembali ke kondisi awal setiap kali situs di-deploy.
+
 ## Environment
 
 Salin `.env.example` menjadi `.env`.
