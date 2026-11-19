@@ -13,18 +13,18 @@ npm run dev
 
 Buka http://localhost:3000
 
-Kata sandi semua akun demo: `SatyaWira#2026`
+Masuk memakai username. Username adalah nama peran, huruf kecil, tanpa spasi. Kata sandi demo adalah username ditambah `123`.
 
-| Peran | Email | Pekerjaan yang menunggu |
-| --- | --- | --- |
-| Super Admin | superadmin@satyawira.co.id | Seluruh modul dan akun |
-| Admin Proyek | admin.proyek@satyawira.co.id | Ajukan PO Bekasi, verifikasi BAST Premier |
-| Direktur | direktur@satyawira.co.id | Arahan rencana RSHS |
-| Gudang | gudang@satyawira.co.id | Terima PR Siloam, cek sisa unit Premier |
-| Produksi | produksi@satyawira.co.id | Siapkan proses CT Siloam |
-| QC Produksi | qc@satyawira.co.id | QC ulang Bumi Sehat |
-| Instalasi | instalasi@satyawira.co.id | QC internal Sentosa lantai 4 |
-| Pelanggan | pelanggan@rssentosa.id | Periksa dan tanda tangan BAST lantai 2 |
+| Peran | Username | Kata sandi | Pekerjaan yang menunggu |
+| --- | --- | --- | --- |
+| Super Admin | superadmin | superadmin123 | Seluruh modul dan akun |
+| Admin Proyek | adminproyek | adminproyek123 | Ajukan PO Bekasi, verifikasi BAST Premier |
+| Direktur | direktur | direktur123 | Arahan rencana RSHS |
+| Gudang | gudang | gudang123 | Terima PR Siloam, cek sisa unit Premier |
+| Produksi | produksi | produksi123 | Siapkan proses CT Siloam |
+| QC Produksi | qcproduksi | qcproduksi123 | QC ulang Bumi Sehat |
+| Instalasi | instalasi | instalasi123 | QC internal Sentosa lantai 4 |
+| Pelanggan | pelanggan | pelanggan123 | Periksa dan tanda tangan BAST lantai 2 |
 
 ## Environment
 

@@ -10,16 +10,16 @@ export const authOptions: NextAuthOptions = {
     Credentials({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
         remember: { label: "Remember", type: "text" },
       },
       async authorize(credentials) {
-        const email = credentials?.email?.toString().toLowerCase().trim() ?? "";
+        const username = credentials?.username?.toString().toLowerCase().trim() ?? "";
         const password = credentials?.password?.toString() ?? "";
         const remember = credentials?.remember === "true";
-        if (!email || !password) return null;
-        const user = await prisma.user.findUnique({ where: { email } });
+        if (!username || !password) return null;
+        const user = await prisma.user.findUnique({ where: { username } });
         if (!user || !user.active) return null;
         const ok = await bcrypt.compare(password, user.passwordHash);
         if (!ok) return null;

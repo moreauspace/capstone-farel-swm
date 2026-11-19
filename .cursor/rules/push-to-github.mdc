@@ -1,0 +1,13 @@
+---
+description: Commit finished work and push it to GitHub
+alwaysApply: true
+---
+
+# Push ke GitHub
+
+Setelah sebuah tugas mengubah file di repo ini dan selesai diverifikasi, commit lalu push ke `origin` (`moreauspace/capstone-farel-swm`, branch `main`).
+
+- Jangan push file rahasia (`.env`, database, kredensial).
+- Jangan force-push, jangan ubah git config, jangan lewati hook.
+- Satu commit per tugas, pesan singkat yang menjelaskan alasannya.
+- Jika push ditolak, perbaiki lalu push biasa. Jangan reset history.

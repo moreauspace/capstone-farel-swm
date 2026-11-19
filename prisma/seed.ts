@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { PRODUCTS } from "../lib/catalog";
+import { LOGIN_NAME, demoPassword } from "../lib/labels";
 
 const prisma = new PrismaClient();
 const year = new Date().getFullYear();
@@ -26,8 +27,6 @@ async function main() {
   await prisma.user.deleteMany();
   await prisma.customer.deleteMany();
   await prisma.material.deleteMany();
-
-  const passwordHash = await bcrypt.hash("SatyaWira#2026", 10);
 
   const materials = [
     ["PB-02", "Timbal lembar 2 mm", "kg", 40, 80, 185000, "Penahan radiasi"],
@@ -127,8 +126,18 @@ async function main() {
 
   const user: Record<string, string> = {};
   for (const [name, email, role, phone, customerId] of people) {
+    const username = LOGIN_NAME[role];
     const row = await prisma.user.create({
-      data: { name, email, passwordHash, role, department: dept[role], phone, customerId },
+      data: {
+        name,
+        username,
+        email,
+        passwordHash: await bcrypt.hash(demoPassword(role), 10),
+        role,
+        department: dept[role],
+        phone,
+        customerId,
+      },
     });
     user[role] = row.id;
   }

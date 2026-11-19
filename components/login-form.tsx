@@ -6,42 +6,40 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
-import { homeFor } from "@/lib/labels";
-
-export const DEMO_PASSWORD = "SatyaWira#2026";
+import { LOGIN_NAME, demoPassword, homeFor } from "@/lib/labels";
 
 const DEMOS = [
-  { role: "Super Admin", email: "superadmin@satyawira.co.id" },
-  { role: "Admin Proyek", email: "admin.proyek@satyawira.co.id" },
-  { role: "Direktur", email: "direktur@satyawira.co.id" },
-  { role: "Gudang", email: "gudang@satyawira.co.id" },
-  { role: "Produksi", email: "produksi@satyawira.co.id" },
-  { role: "QC Produksi", email: "qc@satyawira.co.id" },
-  { role: "Instalasi", email: "instalasi@satyawira.co.id" },
-  { role: "Pelanggan", email: "pelanggan@rssentosa.id" },
-];
+  { role: "SUPER_ADMIN", label: "Super Admin" },
+  { role: "ADMIN_PROYEK", label: "Admin Proyek" },
+  { role: "DIREKTUR", label: "Direktur" },
+  { role: "WAREHOUSE", label: "Gudang" },
+  { role: "PRODUKSI", label: "Produksi" },
+  { role: "QC_PRODUKSI", label: "QC Produksi" },
+  { role: "INSTALASI", label: "Instalasi" },
+  { role: "PELANGGAN", label: "Pelanggan" },
+] as const;
 
 export function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin.proyek@satyawira.co.id");
-  const [password, setPassword] = useState(DEMO_PASSWORD);
+  const [username, setUsername] = useState(LOGIN_NAME.ADMIN_PROYEK);
+  const [password, setPassword] = useState(demoPassword("ADMIN_PROYEK"));
   const [remember, setRemember] = useState(true);
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
-  async function submit(nextEmail = email, nextPassword = password) {
+  async function submit(nextUsername = username, nextPassword = password) {
     setPending(true);
     setError("");
     const result = await signIn("credentials", {
       redirect: false,
-      email: nextEmail,
+      username: nextUsername,
       password: nextPassword,
       remember: remember ? "true" : "false",
     });
     setPending(false);
     if (!result || result.error) {
-      setError("Email atau kata sandi tidak sesuai, atau akun nonaktif.");
+      setError("Username atau kata sandi tidak sesuai, atau akun nonaktif.");
       return;
     }
     const session = await getSession();
@@ -58,8 +56,15 @@ export function LoginForm() {
       }}
     >
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" autoComplete="username" required value={email} onChange={(event) => setEmail(event.target.value)} />
+        <Label htmlFor="username">Username</Label>
+        <Input
+          id="username"
+          type="text"
+          autoComplete="username"
+          required
+          value={username}
+          onChange={(event) => setUsername(event.target.value.toLowerCase().replace(/\s/g, ""))}
+        />
       </div>
       <div>
         <div className="mb-1.5 flex items-center justify-between">
@@ -92,22 +97,25 @@ export function LoginForm() {
       <div>
         <p className="mb-2 text-[12px] uppercase tracking-[0.14em] text-muted">Akun demo</p>
         <div className="grid grid-cols-2 gap-2">
-          {DEMOS.map((demo) => (
-            <button
-              key={demo.email}
-              type="button"
-              disabled={pending}
-              onClick={() => {
-                setEmail(demo.email);
-                setPassword(DEMO_PASSWORD);
-                void submit(demo.email, DEMO_PASSWORD);
-              }}
-              className="rounded-[8px] border border-line px-2 py-2 text-left text-[12px] hover:border-copper"
-            >
-              <span className="block font-medium">{demo.role}</span>
-              <span className="block truncate text-muted">{demo.email.split("@")[0]}</span>
-            </button>
-          ))}
+          {DEMOS.map((demo) => {
+            const name = LOGIN_NAME[demo.role];
+            return (
+              <button
+                key={demo.role}
+                type="button"
+                disabled={pending}
+                onClick={() => {
+                  setUsername(name);
+                  setPassword(demoPassword(demo.role));
+                  void submit(name, demoPassword(demo.role));
+                }}
+                className="rounded-[8px] border border-line px-2 py-2 text-left text-[12px] hover:border-copper"
+              >
+                <span className="block font-medium">{demo.label}</span>
+                <span className="block truncate text-muted">{name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </form>

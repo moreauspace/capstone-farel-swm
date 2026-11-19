@@ -44,6 +44,22 @@ export const ROLE_META: Record<
   },
 };
 
+export const LOGIN_NAME: Record<string, string> = {
+  SUPER_ADMIN: "superadmin",
+  ADMIN_PROYEK: "adminproyek",
+  DIREKTUR: "direktur",
+  WAREHOUSE: "gudang",
+  PRODUKSI: "produksi",
+  QC_PRODUKSI: "qcproduksi",
+  INSTALASI: "instalasi",
+  PELANGGAN: "pelanggan",
+};
+
+export function demoPassword(role: string) {
+  const name = LOGIN_NAME[role];
+  return name ? `${name}123` : "";
+}
+
 export const STATUS_META: Record<string, { label: string; tone: string }> = {
   DRAFT: { label: "Draft PO", tone: "neutral" },
   MENUNGGU_DIREKTUR: { label: "Menunggu arahan", tone: "warn" },

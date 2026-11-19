@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { Mark } from "@/components/brand";
-import { LoginForm, DEMO_PASSWORD } from "@/components/login-form";
+import { LoginForm } from "@/components/login-form";
 import { authOptions } from "@/lib/auth";
 import { homeFor } from "@/lib/labels";
 
@@ -36,13 +36,13 @@ export default async function LoginPage() {
             ))}
           </ol>
         </div>
-        <p className="text-[12px] text-[#9eb0c2]">Kawasan Industri Jababeka II, Cikarang · kata sandi demo {DEMO_PASSWORD}</p>
+        <p className="text-[12px] text-[#9eb0c2]">Kawasan Industri Jababeka II, Cikarang</p>
       </section>
       <section className="flex items-center px-5 py-10 sm:px-10">
         <div className="mx-auto w-full max-w-md">
           <p className="text-[12px] uppercase tracking-[0.14em] text-muted lg:hidden">PT Satya Wira Mandiri</p>
           <h2 className="mt-2 font-display text-4xl tracking-tight">Masuk ke ruang operasional</h2>
-          <p className="mb-6 mt-2 text-sm text-muted">Gunakan email dinas. Akun demo di bawah memakai sandi yang sama.</p>
+          <p className="mb-6 mt-2 text-sm text-muted">Username mengikuti peran, huruf kecil tanpa spasi. Sandi demo adalah username ditambah 123.</p>
           <LoginForm />
         </div>
       </section>

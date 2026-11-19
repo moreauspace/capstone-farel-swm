@@ -268,6 +268,11 @@ export async function createProject(raw: z.input<typeof createSchema>) {
 
 const userSchema = z.object({
   name: z.string().min(3, "Nama wajib diisi"),
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z0-9]+$/, "Username huruf kecil tanpa spasi"),
   email: z.string().email("Email tidak valid"),
   role: z.enum(ROLES),
   phone: z.string().optional(),
@@ -286,6 +291,7 @@ export async function createUser(raw: z.input<typeof userSchema>) {
     await prisma.user.create({
       data: {
         name: input.name.trim(),
+        username: input.username,
         email: input.email.toLowerCase().trim(),
         passwordHash: await bcrypt.hash(input.password, 10),
         role: input.role,
@@ -298,7 +304,7 @@ export async function createUser(raw: z.input<typeof userSchema>) {
     return { ok: true as const, message: "Akun dibuat." };
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && (error as { code: string }).code === "P2002") {
-      return { ok: false as const, message: "Email sudah dipakai." };
+      return { ok: false as const, message: "Username atau email sudah dipakai." };
     }
     return fail(error);
   }

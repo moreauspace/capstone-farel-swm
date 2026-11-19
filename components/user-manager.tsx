@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/field";
 import { Modal } from "@/components/ui/modal";
-import { ROLE_META } from "@/lib/labels";
+import { LOGIN_NAME, ROLE_META } from "@/lib/labels";
 import { ROLES } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { createUser, resetUserPassword, setUserActive } from "@/server/actions";
@@ -14,6 +14,7 @@ import { createUser, resetUserPassword, setUserActive } from "@/server/actions";
 type Row = {
   id: string;
   name: string;
+  username: string;
   email: string;
   role: string;
   department: string;
@@ -36,6 +37,7 @@ export function UserManager({
   const [open, setOpen] = useState(false);
   const [resetId, setResetId] = useState<string | null>(null);
   const [role, setRole] = useState("ADMIN_PROYEK");
+  const [username, setUsername] = useState(LOGIN_NAME.ADMIN_PROYEK);
   const [pending, start] = useTransition();
 
   return (
@@ -59,7 +61,7 @@ export function UserManager({
               <tr key={user.id} className="border-t border-line">
                 <td className="px-3 py-3">
                   <div className="font-medium">{user.name}</div>
-                  <div className="text-[12px] text-muted">{user.email}</div>
+                  <div className="text-[12px] text-muted">{user.username}</div>
                 </td>
                 <td className="px-3 py-3">
                   <div>{ROLE_META[user.role]?.label ?? user.role}</div>
@@ -102,6 +104,7 @@ export function UserManager({
             start(async () => {
               const result = await createUser({
                 name: String(data.get("name") ?? ""),
+                username,
                 email: String(data.get("email") ?? ""),
                 role: String(data.get("role") ?? role) as (typeof ROLES)[number],
                 phone: String(data.get("phone") ?? ""),
@@ -122,12 +125,31 @@ export function UserManager({
             <Input id="name" name="name" required />
           </div>
           <div>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              name="username"
+              required
+              value={username}
+              onChange={(event) => setUsername(event.target.value.toLowerCase().replace(/\s/g, ""))}
+            />
+          </div>
+          <div>
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" required />
           </div>
           <div>
             <Label htmlFor="role">Peran</Label>
-            <Select id="role" name="role" value={role} onChange={(event) => setRole(event.target.value)}>
+            <Select
+              id="role"
+              name="role"
+              value={role}
+              onChange={(event) => {
+                const next = event.target.value;
+                setRole(next);
+                setUsername(LOGIN_NAME[next] ?? "");
+              }}
+            >
               {ROLES.map((item) => (
                 <option key={item} value={item}>{ROLE_META[item].label}</option>
               ))}

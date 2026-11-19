@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const year = new Date().getFullYear();
 const code = (n: number) => `SWM-${year}-${String(n).padStart(3, "0")}`;
 
-async function actions(projectCode: string, email: string) {
+async function actions(projectCode: string, username: string) {
   const project = await prisma.project.findUnique({
     where: { code: projectCode },
     include: {
@@ -15,8 +15,8 @@ async function actions(projectCode: string, email: string) {
       bomItems: { include: { material: true } },
     },
   });
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!project || !user) throw new Error(`Data tidak ada untuk ${projectCode} / ${email}`);
+  const user = await prisma.user.findUnique({ where: { username } });
+  if (!project || !user) throw new Error(`Data tidak ada untuk ${projectCode} / ${username}`);
   const model = buildWorkspace(makeContext(project), { role: user.role, customerId: user.customerId });
   return { ids: model.actions.map((item) => item.id).sort(), readiness: readinessOf(makeContext(project)) };
 }
@@ -28,40 +28,40 @@ function same(actual: string[], expected: string[]) {
 }
 
 async function main() {
-  const a1 = await actions(code(1), "admin.proyek@satyawira.co.id");
+  const a1 = await actions(code(1), "adminproyek");
   same(a1.ids, ["SUBMIT_PLAN"]);
-  const d1 = await actions(code(1), "direktur@satyawira.co.id");
+  const d1 = await actions(code(1), "direktur");
   same(d1.ids, []);
 
-  const a2 = await actions(code(2), "direktur@satyawira.co.id");
+  const a2 = await actions(code(2), "direktur");
   same(a2.ids, ["APPROVE_PLAN", "RETURN_PLAN"]);
 
-  const w3 = await actions(code(3), "gudang@satyawira.co.id");
+  const w3 = await actions(code(3), "gudang");
   same(w3.ids, ["CONFIRM_ARRIVAL"]);
-  const p3 = await actions(code(3), "produksi@satyawira.co.id");
+  const p3 = await actions(code(3), "produksi");
   same(p3.ids, ["PREPARE_PRODUCTION"]);
 
-  const w4 = await actions(code(4), "gudang@satyawira.co.id");
+  const w4 = await actions(code(4), "gudang");
   same(w4.ids, ["CHECK_MATERIAL"]);
   if (w4.readiness.canBuild !== 2) throw new Error(`Batch parsial harus 2 unit, dapat ${w4.readiness.canBuild}`);
-  const p4 = await actions(code(4), "produksi@satyawira.co.id");
+  const p4 = await actions(code(4), "produksi");
   same(p4.ids, []);
 
-  const q5 = await actions(code(5), "qc@satyawira.co.id");
+  const q5 = await actions(code(5), "qcproduksi");
   same(q5.ids, ["QC_FAIL", "QC_PASS"]);
 
-  const i6 = await actions(code(6), "instalasi@satyawira.co.id");
+  const i6 = await actions(code(6), "instalasi");
   same(i6.ids, ["INSTALL_QC_FAIL", "INSTALL_QC_PASS"]);
-  const c6 = await actions(code(6), "pelanggan@rssentosa.id");
+  const c6 = await actions(code(6), "pelanggan");
   same(c6.ids, []);
 
-  const c7 = await actions(code(7), "pelanggan@rssentosa.id");
+  const c7 = await actions(code(7), "pelanggan");
   same(c7.ids, ["CLIENT_REQUEST_FIX", "CLIENT_SIGN_BAST"]);
 
-  const a8 = await actions(code(8), "admin.proyek@satyawira.co.id");
+  const a8 = await actions(code(8), "adminproyek");
   same(a8.ids, ["CLOSE_PROJECT"]);
 
-  const a9 = await actions(code(9), "admin.proyek@satyawira.co.id");
+  const a9 = await actions(code(9), "adminproyek");
   same(a9.ids, []);
 
   console.log("Alur BPMN sesuai untuk sembilan proyek sampel.");
