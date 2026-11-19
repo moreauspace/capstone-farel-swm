@@ -7,9 +7,15 @@ import { homeFor } from "@/lib/labels";
 
 const LANES = ["Admin proyek", "Direktur", "Gudang", "Produksi", "QC", "Instalasi", "Pelanggan"];
 
-export default async function LoginPage() {
+function nextPath(value: string | string[] | undefined, fallback: string) {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("?") || raw.includes("callbackUrl")) return fallback;
+  return raw;
+}
+
+export default async function LoginPage({ searchParams }: { searchParams: { callbackUrl?: string | string[] } }) {
   const session = await getServerSession(authOptions);
-  if (session?.user) redirect(homeFor(session.user.role));
+  if (session?.user) redirect(nextPath(searchParams.callbackUrl, homeFor(session.user.role)));
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
       <section className="hidden flex-col justify-between bg-[#102433] px-12 py-10 text-[#e7eef5] lg:flex">
