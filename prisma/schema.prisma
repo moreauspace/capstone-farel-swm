@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         String
+  department   String
+  phone        String?
+  active       Boolean        @default(true)
+  customerId   String?
+  customer     Customer?      @relation(fields: [customerId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  notifications Notification[]
+  otpTokens     OtpToken[]
+  auditLogs     AuditLog[]
+  documents     Document[]
+  projects      Project[]      @relation("ProjectCreator")
+
+  @@index([role])
+  @@index([customerId])
+}
+
+model OtpToken {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash       String
+  expiresAt      DateTime
+  attempts       Int       @default(0)
+  consumed       Boolean   @default(false)
+  resetTokenHash String?
+  resetExpiresAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([resetTokenHash])
+}
+
+model Customer {
+  id          String    @id @default(cuid())
+  companyName String
+  contactName String
+  email       String
+  phone       String?
+  address     String?
+  users       User[]
+  projects    Project[]
+  createdAt   DateTime  @default(now())
+}
+
+model Material {
+  id         String                @id @default(cuid())
+  sku        String                @unique
+  name       String
+  unit       String
+  stockQty   Float                 @default(0)
+  minStock   Float                 @default(0)
+  unitPrice  Float                 @default(0)
+  category   String
+  movements  StockMovement[]
+  bomItems   BomItem[]
+  prItems    PurchaseRequestItem[]
+  batchUses  BatchMaterial[]
+}
+
+model Project {
+  id                 String             @id @default(cuid())
+  code               String             @unique
+  title              String
+  description        String
+  productName        String
+  specification      String
+  location           String
+  totalOrderedUnits  Int
+  producedUnits      Int                @default(0)
+  passedUnits        Int                @default(0)
+  status             String
+  productionPrepared Boolean            @default(false)
+  deadline           DateTime?
+  poNumber           String?
+  directorNotes      String?
+  approvedAt         DateTime?
+  shippedAt          DateTime?
+  arrivedSiteAt      DateTime?
+  bastAt             DateTime?
+  completedAt        DateTime?
+  customerId         String
+  customer           Customer           @relation(fields: [customerId], references: [id])
+  createdById        String
+  createdBy          User               @relation("ProjectCreator", fields: [createdById], references: [id])
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  bomItems           BomItem[]
+  batches            ProductionBatch[]
+  units              ProductUnit[]
+  documents          Document[]
+  decisions          GatewayDecision[]
+  audits             AuditLog[]
+  purchaseRequests   PurchaseRequest[]
+  qcRecords          QcRecord[]
+  notifications      Notification[]
+
+  @@index([status])
+  @@index([customerId])
+}
+
+model BomItem {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  materialId String
+  material   Material @relation(fields: [materialId], references: [id])
+  qtyPerUnit Float
+
+  @@index([projectId])
+}
+
+model StockMovement {
+  id         String   @id @default(cuid())
+  materialId String
+  material   Material @relation(fields: [materialId], references: [id])
+  qty        Float
+  type       String
+  refType    String?
+  refId      String?
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([materialId])
+}
+
+model PurchaseRequest {
+  id        String                @id @default(cuid())
+  code      String                @unique
+  projectId String
+  project   Project               @relation(fields: [projectId], references: [id])
+  status    String
+  notes     String?
+  createdAt DateTime              @default(now())
+  orderedAt DateTime?
+  arrivedAt DateTime?
+  items     PurchaseRequestItem[]
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model PurchaseRequestItem {
+  id          String          @id @default(cuid())
+  prId        String
+  pr          PurchaseRequest @relation(fields: [prId], references: [id], onDelete: Cascade)
+  materialId  String
+  material    Material        @relation(fields: [materialId], references: [id])
+  qty         Float
+  receivedQty Float           @default(0)
+}
+
+model ProductionBatch {
+  id         String          @id @default(cuid())
+  projectId  String
+  project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  batchNo    Int
+  plannedQty Int
+  status     String
+  notes      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  qcAt       DateTime?
+  createdAt  DateTime        @default(now())
+  materials  BatchMaterial[]
+  units      ProductUnit[]
+  qcRecords  QcRecord[]
+
+  @@index([projectId])
+}
+
+model BatchMaterial {
+  id         String          @id @default(cuid())
+  batchId    String
+  batch      ProductionBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  materialId String
+  material   Material        @relation(fields: [materialId], references: [id])
+  qty        Float
+}
+
+model ProductUnit {
+  id        String          @id @default(cuid())
+  projectId String
+  project   Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  batchId   String
+  batch     ProductionBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  serialNo  String          @unique
+  status    String
+
+  @@index([projectId])
+}
+
+model QcRecord {
+  id        String           @id @default(cuid())
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  batchId   String?
+  batch     ProductionBatch? @relation(fields: [batchId], references: [id])
+  stage     String
+  result    String
+  notes     String?
+  inspector String?
+  createdAt DateTime         @default(now())
+
+  @@index([projectId])
+  @@index([stage])
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type        String
+  title       String
+  number      String
+  payload     String
+  status      String
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([projectId])
+  @@index([type])
+}
+
+model GatewayDecision {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  gateway    String
+  decision   String
+  notes      String?
+  actorName  String
+  fromStatus String
+  toStatus   String
+  createdAt  DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  actorName String
+  action    String
+  detail    String
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  title     String
+  body      String
+  href      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, read])
+}

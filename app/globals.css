@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --canvas: #f3efe7;
+  --card: #fffdf9;
+  --ink: #1c2430;
+  --muted: #5e6b78;
+  --line: #e3dacd;
+  --navy: #16324a;
+  --copper: #a35b32;
+  --good: #1c7a4d;
+  --bad: #9d3b34;
+  --warn: #8d6214;
+  --info: #1e527f;
+  --sidebar: #102433;
+  --sidebar-ink: #e7eef5;
+  --shadow: 0 1px 0 rgba(16, 32, 51, 0.04), 0 18px 40px -28px rgba(16, 32, 51, 0.55);
+}
+
+.dark {
+  color-scheme: dark;
+  --canvas: #0e141b;
+  --card: #17202a;
+  --ink: #eef3f7;
+  --muted: #a9b6c2;
+  --line: #2c3946;
+  --navy: #d5e4f2;
+  --copper: #e0a078;
+  --good: #8fd0ae;
+  --bad: #f0b4ae;
+  --warn: #efd094;
+  --info: #b7d4ef;
+  --sidebar: #0c1218;
+  --sidebar-ink: #e7eef5;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -28px rgba(0, 0, 0, 0.7);
+}
+
+* { box-sizing: border-box; }
+
+html, body { min-height: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(163, 91, 50, 0.06), transparent 50%),
+    var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection { background: #e8cbb8; color: #1c2430; }
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.num { font-variant-numeric: tabular-nums; }
+
+.ticket {
+  background-color: #fffdf8;
+  color: #241c16;
+  border: 1px solid #e6dccb;
+  box-shadow: 0 16px 40px -28px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
