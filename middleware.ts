@@ -31,5 +31,6 @@ export const config = {
     "/users/:path*",
     "/portal/:path*",
     "/notifications/:path*",
+    "/buka/:path*",
   ],
 };

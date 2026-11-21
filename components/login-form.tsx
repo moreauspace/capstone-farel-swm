@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/field";
 import { LOGIN_NAME, demoPassword, homeFor } from "@/lib/labels";
+import { TOUR, TOUR_KEY, tourLogin, tourSignInFailed } from "@/lib/tour";
 
 const DEMOS = [
   { role: "SUPER_ADMIN", label: "Super Admin" },
@@ -45,6 +46,28 @@ export function LoginForm() {
     const session = await getSession();
     router.push(homeFor(session?.user.role ?? ""));
     router.refresh();
+  }
+
+  async function startTour() {
+    const first = TOUR[0];
+    const login = tourLogin(first.role);
+    setPending(true);
+    setError("");
+    sessionStorage.setItem(TOUR_KEY, "0");
+    const result = await signIn("credentials", {
+      redirect: false,
+      username: login.username,
+      password: login.password,
+      remember: "true",
+    });
+    const session = await getSession();
+    if (tourSignInFailed(result) || session?.user.role !== first.role) {
+      sessionStorage.removeItem(TOUR_KEY);
+      setPending(false);
+      setError("Tutorial gagal masuk ke akun pelanggan.");
+      return;
+    }
+    window.location.assign(first.href);
   }
 
   return (
@@ -118,6 +141,17 @@ export function LoginForm() {
           })}
         </div>
       </div>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => void startTour()}
+        className="w-full rounded-[8px] border border-copper px-3 py-2 text-left text-sm hover:bg-[#f8efe6] disabled:opacity-50 dark:hover:bg-[#2a2118]"
+      >
+        <span className="block font-medium">Ikuti alur pesanan</span>
+        <span className="mt-0.5 block text-[12px] leading-5 text-muted">
+          Mulai sebagai pelanggan, lalu akun berganti sendiri mengikuti BPMN sampai pesanan kembali dan berkas ditutup.
+        </span>
+      </button>
     </form>
   );
 }

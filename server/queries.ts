@@ -156,6 +156,16 @@ const FILTERS: Record<string, string[]> = {
   selesai: ["SELESAI"],
 };
 
+export async function projectIdForActor(actor: Actor, code: string) {
+  const project = await prisma.project.findUnique({
+    where: { code },
+    select: { id: true, customerId: true },
+  });
+  if (!project) return null;
+  if (actor.role === "PELANGGAN" && project.customerId !== actor.customerId) return null;
+  return project.id;
+}
+
 export async function listProjects(actor: Actor, q?: string, filter?: string) {
   const statuses = filter ? FILTERS[filter] ?? [filter] : undefined;
   const query = q?.trim();

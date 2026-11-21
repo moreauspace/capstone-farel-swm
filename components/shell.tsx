@@ -20,8 +20,10 @@ import {
   X,
 } from "lucide-react";
 import { Mark } from "@/components/brand";
+import { FlowTour } from "@/components/flow-tour";
 import { NotificationBell } from "@/components/notification-bell";
 import { ROLE_META } from "@/lib/labels";
+import { TOUR_KEY } from "@/lib/tour";
 import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard };
@@ -101,6 +103,7 @@ export function Shell({
         >
           {children}
         </motion.main>
+        <FlowTour />
       </div>
       {open ? (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -165,7 +168,10 @@ function SidebarBody({
         </div>
         <button
           type="button"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => {
+            sessionStorage.removeItem(TOUR_KEY);
+            void signOut({ callbackUrl: "/login" });
+          }}
           className="flex w-full items-center gap-2 rounded-[8px] px-2.5 py-2 text-left text-sm text-[#c9d6e2] hover:bg-white/5"
         >
           <LogOut className="size-4" />
